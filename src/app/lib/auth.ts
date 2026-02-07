@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Roles, UserStatus } from "../../generated/prisma/enums";
+import { envVars } from "../../config/env";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -23,7 +24,7 @@ export const auth = betterAuth({
         defaultValue: UserStatus.ACTIVE,
       },
       needPasswordChange: {
-        type: "string",
+        type: "boolean",
         required: true,
         defaultValue: false,
       },
@@ -39,7 +40,7 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [process.env.BETTER_AUTH_URL as string],
+  trustedOrigins: [envVars.BETTER_AUTH_URL],
   advanced: {
     disableCSRFCheck: true,
   },

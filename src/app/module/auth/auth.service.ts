@@ -27,11 +27,28 @@ const registerPatient = async (payload: IRegisterPayload) => {
   }
 
   //TODO : Create Patient profile in transaction after signup of patient in user model
-  //   const patient = await prisma.$transaction(async (tx) => {
+  const patient = await prisma.$transaction(async (tx) => {
+    try {
+      const patientTx = await tx.patient.create({
+        data: {
+          userId: data.user.id,
+          name: payload.name,
+          email: payload.email,
+        },
+      });
+      return patientTx;
+    } catch (err) {
+      console.log("Transaction error: ", err);
+      await prisma.user.delete({
+        where: {
+          id: data.user.id,
+        },
+      });
+      throw err;
+    }
+  });
 
-  //   })
-
-  return data;
+  return { ...data, patient };
 };
 
 const loginPatient = async (payload: IRegisterPayload) => {

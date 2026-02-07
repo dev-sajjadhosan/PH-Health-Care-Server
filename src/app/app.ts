@@ -1,6 +1,8 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { indexRoutes } from "./routes";
+import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import { notFound } from "./middleware/notFound";
 
 const app: Application = express();
 const port = process.env.PORT;
@@ -24,4 +26,6 @@ app.get("/", async (req: Request, res: Response) => {
   });
 });
 
+app.use(globalErrorHandler);
+app.use(notFound)
 export default app;
