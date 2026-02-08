@@ -1,5 +1,6 @@
-import { Specialty } from "../../generated/prisma/client";
-import { SpecialtyWhereInput } from "../../generated/prisma/models";
+
+import { Specialty } from "../../../generated/prisma/client";
+import { SpecialtyWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
 const createSpecialty = async (payload: Specialty): Promise<Specialty> => {

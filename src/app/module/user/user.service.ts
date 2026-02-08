@@ -46,7 +46,7 @@ export const createDoctor = async (payload: ICreateDoctorPayload) => {
         },
       });
 
-      const doctorSpecialtyData = specialties.map((specialty) => {
+      const doctorSpecialtyData = specialties?.map((specialty) => {
         return {
           doctorId: doctorData.id,
           specialtyId: specialty.id,

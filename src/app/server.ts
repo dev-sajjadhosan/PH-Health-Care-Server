@@ -2,7 +2,7 @@ config();
 
 import { config } from "dotenv";
 import app from "./app";
-import { envVars } from "../config/env";
+import { envVars } from "./config/env";
 
 const runLolo = () => {
   try {
