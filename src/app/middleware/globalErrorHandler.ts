@@ -4,6 +4,7 @@ import status from "http-status";
 import z from "zod";
 import { TErrorResponse, TErrorSources } from "../interfaces/error.interface";
 import { handleZodError } from "../errorHelpers/handleZodError";
+import AppError from "../errorHelpers/AppError";
 
 export const globalErrorHandler = (
   err: any,
@@ -26,11 +27,27 @@ export const globalErrorHandler = (
     message: zError.message;
     errorSources.push(...zError.errorSources);
     stack = err.stack;
+  } else if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message;
+    stack = err.stack;
+    errorSources = [
+      {
+        path: "",
+        message: err.message,
+      },
+    ];
   } else if (err instanceof Error) {
-    //? Native error class should be alawys on the end or bottom.
+    //?  Native error class should be alawys on the end or bottom.
     statusCode = status.INTERNAL_SERVER_ERROR;
     message = err.message;
     stack = err.stack;
+    errorSources = [
+      {
+        path: "",
+        message: err.message,
+      },
+    ];
   }
 
   const errorResponse: TErrorResponse = {
