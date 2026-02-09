@@ -5,6 +5,7 @@ import { prisma } from "../../lib/prisma";
 import { Request } from "express";
 import AppError from "../../errorHelpers/AppError";
 import status from "http-status";
+import { tokenUtils } from "../../utils/token";
 
 interface IRegisterPayload {
   name: string;
@@ -49,8 +50,27 @@ const registerPatient = async (payload: IRegisterPayload) => {
       throw err;
     }
   });
+  const accessToken = tokenUtils.getAccessToken({
+    userId: data.user.id,
+    role: data.user.role,
+    name: data.user.name,
+    email: data.user.email,
+    status: data.user.status,
+    isDeeleted: data.user.isDeleted,
+    emailVerified: data.user.emailVerified,
+  });
 
-  return { ...data, patient };
+  const refreshToken = tokenUtils.getRefreshToken({
+    userId: data.user.id,
+    role: data.user.role,
+    name: data.user.name,
+    email: data.user.email,
+    status: data.user.status,
+    isDeeleted: data.user.isDeleted,
+    emailVerified: data.user.emailVerified,
+  });
+
+  return { ...data, accessToken, refreshToken, patient };
 };
 
 const loginPatient = async (payload: IRegisterPayload) => {
@@ -71,7 +91,31 @@ const loginPatient = async (payload: IRegisterPayload) => {
     throw new AppError(status.NOT_FOUND, "User is deleted");
   }
 
-  return data;
+  const accessToken = tokenUtils.getAccessToken({
+    userId: data.user.id,
+    role: data.user.role,
+    name: data.user.name,
+    email: data.user.email,
+    status: data.user.status,
+    isDeeleted: data.user.isDeleted,
+    emailVerified: data.user.emailVerified,
+  });
+
+  const refreshToken = tokenUtils.getRefreshToken({
+    userId: data.user.id,
+    role: data.user.role,
+    name: data.user.name,
+    email: data.user.email,
+    status: data.user.status,
+    isDeeleted: data.user.isDeleted,
+    emailVerified: data.user.emailVerified,
+  });
+
+  return {
+    ...data,
+    accessToken,
+    refreshToken,
+  };
 };
 
 const logoutPatient = async (req: Request) => {
