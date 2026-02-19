@@ -6,7 +6,7 @@ import {
 
 export interface IUpdatePatientInfoPayload {
   name: string;
-  profile: string;
+  profilePhoto: string;
   contactNumber: string;
   address: string;
 }

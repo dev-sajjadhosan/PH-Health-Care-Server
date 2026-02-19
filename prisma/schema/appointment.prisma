@@ -19,7 +19,8 @@ model Appointment {
     review          Review?
     payment         Payment?
     doctorSchedules DoctorSchedules[]
-    medicalReport   MedicalReport?
+    medicalReport   MedicalReport?    @relation(fields: [medicalReportId], references: [id])
+    medicalReportId String?
 
     @@index([patientId])
     @@index([doctorId])
