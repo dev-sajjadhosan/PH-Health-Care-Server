@@ -73,6 +73,16 @@ export const checkAuth = (...authRoles: Roles[]) => {
               "Forbidden access! You do not have permission to access this resource.",
             );
           }
+
+          req.user = {
+            userId: user.id,
+            role: user.role,
+            email: user.email,
+            name: user.name,
+            status: user.status,
+            isDeleted: user.isDeleted,
+            emailVerified: user.emailVerified,
+          }
         }
 
         // Access Token Verification
@@ -118,6 +128,7 @@ export const checkAuth = (...authRoles: Roles[]) => {
           "Forbidden access! You do not have permission to access this resource.",
         );
       }
+
       next(); // Go to the next road...
     } catch (error: any) {
       next(error);

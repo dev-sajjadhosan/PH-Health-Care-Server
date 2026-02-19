@@ -3,14 +3,40 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Roles, UserStatus } from "../../generated/prisma/enums";
 import { envVars } from "../config/env";
-import ms, { StringValue } from "ms";
+import { bearer, emailOTP } from "better-auth/plugins";
+import { sendEmail } from "../utils/email";
 
 export const auth = betterAuth({
+  appName: "PH Health Care",
+  baseURL: envVars.BETTER_AUTH_URL,
+  secret: envVars.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+  },
+  socialProviders: {
+    google: {
+      clientId: envVars.GOOGLE_CLIENT_ID,
+      clientSecret: envVars.GOOGLE_CLIENT_SECRET,
+      mapProfileToUser: () => {
+        return {
+          role: Roles.PATIENT,
+          status: UserStatus.ACTIVE,
+          needPasswordChange: false,
+          emailVerified: true,
+          isDeleted: false,
+          deletedAt: null,
+        };
+      },
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
   },
   user: {
     additionalFields: {
@@ -41,13 +67,100 @@ export const auth = betterAuth({
       },
     },
   },
-  trustedOrigins: [envVars.BETTER_AUTH_URL],
+
+  plugins: [
+    bearer(),
+    emailOTP({
+      overrideDefaultEmailVerification: true,
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type === "email-verification") {
+          const user = await prisma.user.findUnique({
+            where: {
+              email,
+            },
+          });
+
+          if (!user) {
+            console.error(
+              `User with email ${email} not found. Cannot send verification OTP.`,
+            );
+            return;
+          }
+
+          if (user && user.role === Roles.SUPER_ADMIN) {
+            console.error(
+              `User with email ${email} is a Super Admin. Skipping sending verification OTP.`,
+            );
+            return;
+          }
+
+          if (user && !user.emailVerified) {
+            sendEmail({
+              to: email,
+              subject: "Email Verification",
+              templateName: "otp",
+              templateData: {
+                name: user.name,
+                otp,
+              },
+            });
+          }
+        } else if (type === "forget-password") {
+          const user = await prisma.user.findUnique({
+            where: {
+              email,
+            },
+          });
+          if (user) {
+            sendEmail({
+              to: email,
+              subject: "Forget Password",
+              templateName: "otp",
+              templateData: {
+                name: user.name,
+                otp,
+              },
+            });
+          }
+        }
+      },
+      expiresIn: 5 * 60,
+      otpLength: 6,
+    }),
+  ],
+  trustedOrigins: [
+    envVars.BETTER_AUTH_URL || "http://localhost:5000",
+    "http://localhost:3000",
+    "http://localhost:4000",
+    envVars.FRONTEND_URL,
+  ],
   advanced: {
-    disableCSRFCheck: true,
+    // disableCSRFCheck: true,
+    useSecureCookies: false,
+    cookies: {
+      state: {
+        attributes: {
+          sameSite: "none",
+          secure: true,
+          httpOnly: true,
+          path: "/",
+        },
+      },
+      sessionToken: {
+        attributes: {
+          sameSite: "none",
+          secure: true,
+          httpOnly: true,
+          path: "/",
+        },
+      },
+    },
+  },
+  redirect: {
+    signIn: `${envVars.BETTER_AUTH_URL}/api/v1/auth/google/success`,
   },
   session: {
     expiresIn: 60 * 60 * 60 * 24,
-
     updateAge: 60 * 60 * 60 * 24,
     cookieCache: {
       enabled: true,

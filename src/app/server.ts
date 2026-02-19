@@ -3,9 +3,11 @@ config();
 import { config } from "dotenv";
 import app from "./app";
 import { envVars } from "./config/env";
+import { seedSuperAdmin } from "./utils/seed";
 
-const runLolo = () => {
+const runLolo = async () => {
   try {
+    await seedSuperAdmin()
     app.listen(envVars.PORT, () => {
       console.log("The Server is running now.");
       console.log(`Server Port is::]=> ${envVars.PORT}`);
