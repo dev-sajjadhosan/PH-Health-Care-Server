@@ -17,3 +17,14 @@ export interface IRequestUser {
     isDeleted: boolean;
     emailVerified: boolean;
 }
+
+
+export interface IChangeUserStatusPayload {
+    userId: string
+    userStatus: UserStatus
+}
+
+export interface IChangeUserRolePayload {
+    userId: string
+    role: Roles
+}
