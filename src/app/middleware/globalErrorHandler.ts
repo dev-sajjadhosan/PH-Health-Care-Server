@@ -7,6 +7,8 @@ import { handleZodError } from "../errorHelpers/handleZodError";
 import AppError from "../errorHelpers/AppError";
 import { deleteFileFromCloudinary } from "../config/cloudinary.config";
 import { deleteUploadFileFromGlobalErrorHandler } from "../utils/deleteUploadFileFromGlobalErrorHandler";
+import { Prisma } from "../../generated/prisma/client";
+import { handlePrismaClientKnownRequestError } from "../errorHelpers/handlePrismaError";
 
 export const globalErrorHandler = async (
   err: any,
@@ -32,8 +34,13 @@ export const globalErrorHandler = async (
   let statusCode: number = status.INTERNAL_SERVER_ERROR;
   let message: string = "Internal Server Error";
   let stack: string | undefined = undefined;
-
-  if (err instanceof z.ZodError) {
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    const simplifiedError = handlePrismaClientKnownRequestError(err);
+    statusCode = simplifiedError.statusCode as number;
+    message = simplifiedError.message;
+    errorSources = [...(simplifiedError.errorSources as any)];
+    stack = err.stack;
+  } else if (err instanceof z.ZodError) {
     const zError = handleZodError(err);
     statusCode = zError.statusCode;
     message: zError.message;
