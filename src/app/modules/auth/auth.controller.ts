@@ -14,10 +14,7 @@ import { CLIENT_RENEG_LIMIT } from "node:tls";
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
   const maxAge = ms(envVars.ACCESS_TOKEN_EXPIRES_IN as StringValue);
-  console.log({ maxAge });
   const payload = req.body;
-
-  console.log(payload);
 
   const result = await AuthService.registerPatient(payload);
 
@@ -64,7 +61,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
-  console.log({ user });
+  // console.log({ user });
   const result = await AuthService.getMe(user as IRequestUser);
   sendResponse(res, {
     httpStatusCode: status.OK,
@@ -195,7 +192,7 @@ const googleLogin = catchAsync((req: Request, res: Response) => {
   const callbackURL = `${envVars.BETTER_AUTH_URL}/api/v1/auth/google/success?redirect=${encodedRedirectPath}`;
 
 
-  console.log({ callbackURL })
+  // console.log({ callbackURL })
 
   res.render("googleRedirect", {
     callbackURL: callbackURL,
@@ -228,7 +225,7 @@ const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
 
   const result = await AuthService.googleLoginSuccess(session);
 
-  console.log({ result })
+  // console.log({ result })
 
   const { accessToken, refreshToken } = result;
 
@@ -245,7 +242,7 @@ const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
 const handleOAuthError = catchAsync((req: Request, res: Response) => {
   const error = (req.query.error as string) || "oauth_failed";
   res.redirect(`${envVars.FRONTEND_URL}/login?error=${error}`);
-  console.log({ error })
+  // console.log({ error })
 });
 
 export const AuthController = {

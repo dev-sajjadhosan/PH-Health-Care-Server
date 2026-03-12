@@ -7,6 +7,7 @@ const router = Router()
 
 router.post("/register", AuthController.registerPatient)
 router.post("/login", AuthController.loginUser)
+
 router.get("/me", checkAuth(Roles.ADMIN, Roles.DOCTOR, Roles.PATIENT, Roles.SUPER_ADMIN), AuthController.getMe)
 router.post("/refresh-token", AuthController.getNewToken)
 router.post("/change-password", checkAuth(Roles.ADMIN, Roles.DOCTOR, Roles.PATIENT, Roles.SUPER_ADMIN), AuthController.changePassword)

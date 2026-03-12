@@ -117,7 +117,7 @@ export const checkAuth = (...authRoles: Roles[]) => {
         );
       }
 
-      console.log(verifyToken.data!.role);
+      // console.log(verifyToken.data!.role);
 
       if (
         authRoles.length > 0 &&

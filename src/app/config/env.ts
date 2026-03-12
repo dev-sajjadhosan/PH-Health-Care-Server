@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import AppError from "../errorHelpers/AppError";
 import status from "http-status";
-import { preprocess } from "zod";
 dotenv.config();
 
 interface EnvConfig {

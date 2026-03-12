@@ -121,7 +121,7 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
 
         return result;
     } catch (error) {
-        console.log("Transaction error : ", error);
+        // console.log("Transaction error : ", error);
         await prisma.user.delete({
             where: {
                 id: userData.user.id
@@ -169,7 +169,7 @@ const createAdmin = async (payload: ICreateAdminPayload) => {
 
 
     } catch (error: any) {
-        console.log("Error creating admin: ", error);
+        // console.log("Error creating admin: ", error);
         await prisma.user.delete({
             where: {
                 id: userData.user.id

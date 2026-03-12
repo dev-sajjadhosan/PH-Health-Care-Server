@@ -74,7 +74,7 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
         }
 
     } catch (error) {
-        console.log("Transaction error : ", error);
+        // console.log("Transaction error : ", error);
         await prisma.user.delete({
             where: {
                 id: data.user.id

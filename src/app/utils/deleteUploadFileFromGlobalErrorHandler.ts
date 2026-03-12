@@ -33,9 +33,9 @@ export const deleteUploadFileFromGlobalErrorHandler = async (req: Request) => {
       await Promise.all(
         filesToDelete.map((url) => deleteFileFromCloudinary(url)),
       );
-      console.log(
-        `\nDeleted ${filesToDelete.length} uploaded file(s) from cloudinary due to an error during request processing.\n`,
-      );
+      // console.log(
+      //   `\nDeleted ${filesToDelete.length} uploaded file(s) from cloudinary due to an error during request processing.\n`,
+      // );
     }
   } catch (error: any) {
     console.error(

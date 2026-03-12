@@ -1,9 +1,9 @@
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "./jwt";
 import { envVars } from "../config/env";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { CookieUtils } from "./cookie";
-import ms, { StringValue } from "ms";
+
 
 const getAccessToken = (payload: JwtPayload) => {
   const token = jwtUtils.createToken(payload, envVars.ACCESS_TOKEN_SECRET, {

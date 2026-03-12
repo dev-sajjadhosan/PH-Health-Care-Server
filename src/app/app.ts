@@ -73,7 +73,6 @@ app.get("/", async (req: Request, res: Response) => {
     message:
       "Server is running now. This server is making for to improve our life to reach out to the best doctor and try to help the patient who are looking for the best doctor.",
     version: "v1",
-    module: "Module 37 | Part 01",
   });
 });
 
