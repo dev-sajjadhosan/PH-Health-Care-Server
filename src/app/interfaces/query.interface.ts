@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface PrismaFindManyArgs {
   where?: Record<string, unknown>;
   include?: Record<string, unknown>;
@@ -22,30 +24,31 @@ export interface PrismaCountArgs {
   [key: string]: unknown;
 }
 
-export interface PrismaModelDelefate {
-  findMany: (args?: any) => Promise<any[]>;
-  count: (args?: any) => Promise<number>;
+export interface PrismaModelDelegate {
+  findMany(args?: any): Promise<any[]>;
+  count(args?: any): Promise<number>;
 }
 
 export interface IQueryParams {
-  searchterm?: string;
+  searchTerm?: string;
   page?: string;
   limit?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   fields?: string;
+  includes?: string;
   [key: string]: string | undefined;
 }
 
 export interface IQueryConfig {
   searchableFields?: string[];
-  fillterableFields?: string[];
+  filterableFields?: string[];
 }
 
 export interface PrismaStringFilter {
   contains?: string;
-  startWith?: string;
-  endWith?: string;
+  startsWith?: string;
+  endsWith?: string;
   mode?: "insensitive" | "default";
   equals?: string;
   in?: string[];
@@ -57,13 +60,6 @@ export interface PrismaStringFilter {
   not?: PrismaStringFilter | string;
 }
 
-export interface PrismaWhereConditions {
-  OR?: Record<string, unknown>[];
-  AND?: Record<string, unknown>[];
-  NOT?: Record<string, unknown>[];
-  [key: string]: unknown;
-}
-
 export interface PrismaNumberFilter {
   equals?: number;
   in?: number[];
@@ -73,6 +69,13 @@ export interface PrismaNumberFilter {
   gt?: number;
   gte?: number;
   not?: PrismaNumberFilter | number;
+}
+
+export interface PrismaWhereConditions {
+  OR?: Record<string, unknown>[];
+  AND?: Record<string, unknown>[];
+  NOT?: Record<string, unknown>[];
+  [key: string]: unknown;
 }
 
 export interface IQueryResult<T> {

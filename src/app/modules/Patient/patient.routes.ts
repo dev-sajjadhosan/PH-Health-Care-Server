@@ -14,6 +14,11 @@ import { updateMyPatientProfileMiddleware } from "./patient.middleware";
 const router = express.Router();
 
 
+router.get(
+  "/",
+  PatientController.getAllPatient
+);
+
 
 router.patch(
   "/update-my-profile",

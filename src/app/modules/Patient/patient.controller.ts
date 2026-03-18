@@ -5,6 +5,22 @@ import { PatientService } from "./patient.service";
 import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
 
+import { IQueryParams } from "../../interfaces/query.interface";
+
+const getAllPatient = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await PatientService.getAllPatient(query as IQueryParams);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Patients fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 const updateProfile = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as IRequestUser;
   const payload = req.body;
@@ -19,5 +35,6 @@ const updateProfile = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const PatientController = {
-  updateProfile
+  getAllPatient,
+  updateProfile,
 };

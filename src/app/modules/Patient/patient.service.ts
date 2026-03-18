@@ -1,11 +1,43 @@
 import { deleteFileFromCloudinary } from "../../config/cloudinary.config";
+import { IQueryParams } from "../../interfaces/query.interface";
 import { prisma } from "../../lib/prisma";
+import { QueryBuilder } from "../../utils/QueryBuilders";
 import { IRequestUser } from "../admin/admin.interface";
 import {
   IUpdatePatientHealthDataPayload,
   IUpdatePatientProfilePayload,
 } from "./patient.interface";
 import { convertToDateTime } from "./patient.utils";
+
+import { Patient, Prisma } from "../../../generated/prisma/client";
+import {
+  patientFilterableFields,
+  patientIncludeConfig,
+  patientSearchableFields,
+} from "./patient.constant";
+
+const getAllPatient = async (query: IQueryParams) => {
+  const queryBuilder = new QueryBuilder<
+    Patient,
+    Prisma.PatientWhereInput,
+    Prisma.PatientInclude
+  >(prisma.patient, query, {
+    searchableFields: patientSearchableFields,
+    filterableFields: patientFilterableFields,
+  });
+
+  const result = await queryBuilder
+    .search()
+    .filter()
+    .where({ isDeleted: false })
+    .dynamicInclude(patientIncludeConfig)
+    .paginate()
+    .sort()
+    .fields()
+    .execute();
+
+  return result;
+};
 
 const updateMyProfile = async (
   user: IRequestUser,
@@ -117,4 +149,5 @@ const updateMyProfile = async (
 
 export const PatientService = {
   updateMyProfile,
+  getAllPatient,
 };
